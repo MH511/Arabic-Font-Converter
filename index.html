@@ -4,29 +4,303 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>محول الخط العربي</title>
+    <meta
+      name="description"
+      content="أداة عربية لتحويل النصوص إلى خطوط عربية مختلفة ومعاينة مباشرة، مع إمكانية نسخ النص أو تنزيله كصورة."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Lateef:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Lateef:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-1: #07111f;
+        --bg-2: #111827;
+        --panel: rgba(15, 23, 42, 0.8);
+        --panel-strong: rgba(17, 24, 39, 0.96);
+        --panel-border: rgba(148, 163, 184, 0.2);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --primary: #fbbf24;
+        --primary-strong: #f59e0b;
+        --accent: #60a5fa;
+        --shadow: rgba(15, 23, 42, 0.5);
+        --button-ghost: rgba(148, 163, 184, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+        background: radial-gradient(circle at top, #172554 0%, var(--bg-1) 35%, var(--bg-2) 100%);
+        color: var(--text);
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 32px 20px;
+      }
+
+      button, select, textarea, input {
+        font: inherit;
+      }
+
+      .app-shell {
+        width: min(1120px, 100%);
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid var(--panel-border);
+        border-radius: 28px;
+        box-shadow: 0 30px 80px rgba(2, 6, 23, 0.65);
+        backdrop-filter: blur(16px);
+        overflow: hidden;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 28px 30px 22px;
+        border-bottom: 1px solid var(--panel-border);
+        background: rgba(15, 23, 42, 0.35);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 2vw, 2.5rem);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: 24px;
+        padding: 28px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 22px;
+        padding: 22px;
+      }
+
+      .label {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 250px;
+        resize: vertical;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 18px;
+        padding: 18px 16px;
+        background: rgba(15, 23, 42, 0.8);
+        color: var(--text);
+        font-size: 1.1rem;
+        line-height: 1.9;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      textarea:focus, select:focus, input:focus {
+        border-color: rgba(96, 165, 250, 0.9);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
+      }
+
+      .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 22px;
+      }
+
+      .full-span {
+        grid-column: 1 / -1;
+      }
+
+      .group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .group label {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      select, input[type="range"] {
+        width: 100%;
+      }
+
+      select {
+        appearance: none;
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--text);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 1rem;
+      }
+
+      input[type="range"] {
+        accent-color: var(--primary);
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+      }
+
+      button {
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        padding: 12px 18px;
+        font-size: 1rem;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .primary-btn {
+        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+        color: #111827;
+        font-weight: 700;
+      }
+
+      .secondary-btn, .action-btn.muted {
+        background: var(--button-ghost);
+        color: var(--text);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+      }
+
+      .action-btn.accent {
+        background: rgba(96, 165, 250, 0.12);
+        border: 1px solid rgba(96, 165, 250, 0.24);
+        color: #dbeafe;
+      }
+
+      .preview-panel {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 94px;
+        background: rgba(96, 165, 250, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .preview-wrap {
+        flex: 1;
+        display: flex;
+      }
+
+      .preview {
+        width: 100%;
+        min-height: 355px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(17, 24, 39, 1));
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        padding: 26px 22px;
+        font-size: 34px;
+        line-height: 2;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        direction: rtl;
+        text-align: right;
+      }
+
+      @media (max-width: 820px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .controls-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Arabic Typography Studio</p>
+          <p class="eyebrow">Arabic Typeface Lab</p>
           <h1>محول الخط العربي</h1>
         </div>
-        <button id="copyBtn" class="secondary-btn">نسخ النص</button>
+
+        <div class="header-actions">
+          <button id="copyBtn" class="secondary-btn">نسخ النص</button>
+          <button id="downloadBtn" class="primary-btn">تحميل PNG</button>
+        </div>
       </header>
 
       <main class="workspace">
         <section class="panel input-panel">
           <label for="textInput" class="label">اكتب النص العربي</label>
-          <textarea id="textInput" rows="12" placeholder="اكتب نصك هنا...">السلام عليكم ورحمة الله وبركاته</textarea>
+          <textarea id="textInput" rows="12" placeholder="اكتب نصك هنا...">مرحبا بك في أداة تحويل الخط العربي، حيث يمكنك استعراض النص بعدة ألوان وخطوط عربية مختلفة.</textarea>
 
-          <div class="toolbar">
+          <div class="controls-grid">
             <div class="group">
-              <label for="fontSelect">اختر الخط</label>
+              <label for="fontSelect">اختيار الخط</label>
               <select id="fontSelect">
                 <option value="Amiri">Amiri</option>
                 <option value="Noto Naskh Arabic">Noto Naskh Arabic</option>
@@ -41,29 +315,226 @@
             </div>
 
             <div class="group">
-              <label for="fontSize">حجم الخط</label>
-              <input id="fontSize" type="range" min="18" max="60" value="32" />
+              <label for="weightSelect">وزن الخط</label>
+              <select id="weightSelect">
+                <option value="400">عادي</option>
+                <option value="500">متوسط</option>
+                <option value="700">غامق</option>
+              </select>
+            </div>
+
+            <div class="group full-span">
+              <label for="fontSize">حجم الخط: <span id="fontSizeValue">34</span>px</label>
+              <input id="fontSize" type="range" min="18" max="72" value="34" />
             </div>
           </div>
 
           <div class="actions">
-            <button id="sampleBtn" class="primary-btn">عرض مثال سريع</button>
-            <button id="clearBtn" class="ghost-btn">مسح</button>
+            <button id="sampleBtn" class="action-btn accent">عرض مثال</button>
+            <button id="clearBtn" class="action-btn muted">مسح</button>
           </div>
         </section>
 
         <section class="panel preview-panel">
           <div class="preview-header">
-            <span class="label">معاينة</span>
+            <span class="label">معاينة مباشرة</span>
             <span id="fontNameBadge" class="badge">Amiri</span>
           </div>
-          <div id="preview" class="preview" aria-live="polite">
-            السلام عليكم ورحمة الله وبركاته
+
+          <div class="preview-wrap">
+            <div id="preview" class="preview" aria-live="polite">
+              مرحبا بك في أداة تحويل الخط العربي، حيث يمكنك استعراض النص بعدة ألوان وخطوط عربية مختلفة.
+            </div>
           </div>
         </section>
       </main>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+      const textInput = document.getElementById('textInput');
+      const fontSelect = document.getElementById('fontSelect');
+      const weightSelect = document.getElementById('weightSelect');
+      const fontSize = document.getElementById('fontSize');
+      const fontSizeValue = document.getElementById('fontSizeValue');
+      const preview = document.getElementById('preview');
+      const fontNameBadge = document.getElementById('fontNameBadge');
+      const copyBtn = document.getElementById('copyBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const sampleBtn = document.getElementById('sampleBtn');
+
+      const sampleText = `الحياة تُعطي من يزرع الصبر ثمرة جميلة،\nوالعلم يُنير الطريق لأصحاب العزيمة.`;
+
+      const fontNames = {
+        Amiri: 'Amiri',
+        'Noto Naskh Arabic': 'Noto Naskh Arabic',
+        Tajawal: 'Tajawal',
+        Cairo: 'Cairo',
+        'Aref Ruqaa': 'Aref Ruqaa',
+        Lateef: 'Lateef',
+        'Scheherazade New': 'Scheherazade New',
+        'Reem Kufi': 'Reem Kufi',
+        'IBM Plex Sans Arabic': 'IBM Plex Sans Arabic'
+      };
+
+      function escapeHtml(value) {
+        return value
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function updateFontSizeLabel() {
+        fontSizeValue.textContent = fontSize.value;
+      }
+
+      function applyPreview() {
+        const content = textInput.value.trim() || 'اكتب هنا';
+        const selectedFont = fontSelect.value;
+        const selectedWeight = weightSelect.value;
+
+        preview.textContent = content;
+        preview.style.fontFamily = `"${selectedFont}", "Segoe UI", sans-serif`;
+        preview.style.fontWeight = selectedWeight;
+        preview.style.fontSize = `${fontSize.value}px`;
+        fontNameBadge.textContent = fontNames[selectedFont] || selectedFont;
+        updateFontSizeLabel();
+      }
+
+      async function copyText() {
+        const text = textInput.value.trim();
+        if (!text) return;
+
+        const selectedFont = fontSelect.value;
+        const selectedWeight = weightSelect.value;
+        const selectedSize = fontSize.value;
+
+        const html = `
+          <div dir="rtl" style="font-family:'${selectedFont}', 'Segoe UI', sans-serif; font-size:${selectedSize}px; font-weight:${selectedWeight}; line-height:1.8; color:#111827; text-align:right; direction:rtl;">
+            ${escapeHtml(text)}
+          </div>
+        `;
+
+        const plain = text;
+
+        try {
+          if (navigator.clipboard && window.ClipboardItem) {
+            const htmlBlob = new Blob([html], { type: 'text/html' });
+            const plainBlob = new Blob([plain], { type: 'text/plain' });
+
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                'text/html': htmlBlob,
+                'text/plain': plainBlob
+              })
+            ]);
+          } else {
+            await navigator.clipboard.writeText(plain);
+          }
+
+          copyBtn.textContent = 'تم النسخ';
+          setTimeout(() => {
+            copyBtn.textContent = 'نسخ النص';
+          }, 1200);
+        } catch (error) {
+          try {
+            await navigator.clipboard.writeText(plain);
+            copyBtn.textContent = 'تم النسخ كنص فقط';
+          } catch (err) {
+            copyBtn.textContent = 'فشل النسخ';
+          }
+
+          setTimeout(() => {
+            copyBtn.textContent = 'نسخ النص';
+          }, 1200);
+        }
+      }
+
+      function downloadAsPng() {
+        const text = textInput.value.trim();
+        if (!text) return;
+
+        const fontName = fontSelect.value;
+        const fontWeight = weightSelect.value;
+        const fontSizePx = Number(fontSize.value);
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        const paddingX = 90;
+        const paddingY = 80;
+        const maxWidth = 1200 - paddingX * 2;
+        const lineHeight = fontSizePx * 1.8;
+
+        context.fillStyle = '#0f172a';
+        context.fillRect(0, 0, 1400, 1000);
+
+        context.font = `${fontWeight} ${fontSizePx}px "${fontName}", "Segoe UI", sans-serif`;
+        context.direction = 'rtl';
+        context.textAlign = 'right';
+        context.fillStyle = '#f8fafc';
+
+        const words = text.split(/\s+/);
+        const lines = [];
+        let currentLine = '';
+
+        for (const word of words) {
+          const test = currentLine ? `${currentLine} ${word}` : word;
+          if (context.measureText(test).width > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            currentLine = test;
+          }
+        }
+
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+
+        const totalHeight = lines.length * lineHeight + paddingY * 2;
+        canvas.width = 1400;
+        canvas.height = Math.max(700, totalHeight);
+
+        context.fillStyle = '#0f172a';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#f8fafc';
+        context.font = `${fontWeight} ${fontSizePx}px "${fontName}", "Segoe UI", sans-serif`;
+        context.textAlign = 'right';
+        context.direction = 'rtl';
+
+        lines.forEach((line, index) => {
+          const x = canvas.width - paddingX;
+          const y = paddingY + (index + 1) * lineHeight;
+          context.fillText(line, x, y);
+        });
+
+        const link = document.createElement('a');
+        link.download = 'arabic-font-preview.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
+
+      fontSelect.addEventListener('change', applyPreview);
+      weightSelect.addEventListener('change', applyPreview);
+      fontSize.addEventListener('input', applyPreview);
+      textInput.addEventListener('input', applyPreview);
+      copyBtn.addEventListener('click', copyText);
+      downloadBtn.addEventListener('click', downloadAsPng);
+      clearBtn.addEventListener('click', () => {
+        textInput.value = '';
+        applyPreview();
+        textInput.focus();
+      });
+
+      sampleBtn.addEventListener('click', () => {
+        textInput.value = sampleText;
+        applyPreview();
+      });
+
+      applyPreview();
+    </script>
   </body>
 </html>
