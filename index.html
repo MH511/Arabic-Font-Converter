@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>محول الخط العربي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Lateef:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Arabic Typography Studio</p>
+          <h1>محول الخط العربي</h1>
+        </div>
+        <button id="copyBtn" class="secondary-btn">نسخ النص</button>
+      </header>
+
+      <main class="workspace">
+        <section class="panel input-panel">
+          <label for="textInput" class="label">اكتب النص العربي</label>
+          <textarea id="textInput" rows="12" placeholder="اكتب نصك هنا...">السلام عليكم ورحمة الله وبركاته</textarea>
+
+          <div class="toolbar">
+            <div class="group">
+              <label for="fontSelect">اختر الخط</label>
+              <select id="fontSelect">
+                <option value="Amiri">Amiri</option>
+                <option value="Noto Naskh Arabic">Noto Naskh Arabic</option>
+                <option value="Tajawal">Tajawal</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Aref Ruqaa">Aref Ruqaa</option>
+                <option value="Lateef">Lateef</option>
+                <option value="Scheherazade New">Scheherazade New</option>
+                <option value="Reem Kufi">Reem Kufi</option>
+                <option value="IBM Plex Sans Arabic">IBM Plex Sans Arabic</option>
+              </select>
+            </div>
+
+            <div class="group">
+              <label for="fontSize">حجم الخط</label>
+              <input id="fontSize" type="range" min="18" max="60" value="32" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="sampleBtn" class="primary-btn">عرض مثال سريع</button>
+            <button id="clearBtn" class="ghost-btn">مسح</button>
+          </div>
+        </section>
+
+        <section class="panel preview-panel">
+          <div class="preview-header">
+            <span class="label">معاينة</span>
+            <span id="fontNameBadge" class="badge">Amiri</span>
+          </div>
+          <div id="preview" class="preview" aria-live="polite">
+            السلام عليكم ورحمة الله وبركاته
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
